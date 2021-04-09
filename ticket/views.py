@@ -1,18 +1,85 @@
-from django.core.exceptions import ValidationError
+
+from PIL import Image
 from django.http.response import Http404
+from rest_framework.views import APIView
 from ticket.serializer import TicketDetailSerializer, TicketSerializer
 from rest_framework.generics import CreateAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from .models import Ticket, TicketDetail
-from .permissions import IsOwner
+from django.contrib.auth.models import User
+from rest_framework.views import Response
+from rest_framework.exceptions import ParseError
+from rest_framework.parsers import FileUploadParser
 
-# Create your views here.
+
+class MyUploadView(APIView):
+    parser_class = (FileUploadParser,)
+
+    def put(self, request, format=None):
+        if 'file' not in request.data:
+            raise ParseError("Empty content")
+
+        f = request.data['file']
+
+        try:
+            img = Image.open(f)
+            img.verify()
+        except:
+            raise ParseError("Unsupported image type")
+
+        id = request.kwargs.get('id')
+        TicketDetail.objects.filter(id=id).update(file=f)
+        return Response(status=201)
+
+
+# new
+class AllAcounts(APIView):
+    permission_classes = (IsAdminUser, )
+
+    def get(self, request, format=None):
+        response = []
+        user = User.objects.all()
+        for i in user:
+            response.append({
+                "username": i.username,
+                "email": i.email,
+                "message": f"کاربر {i.username} مجموعا برای ما {i.tickets.count()} تیکت ثبت کرده است"
+            })
+        return Response(response)
+# new
+
+
+class MyAcount(APIView):
+    def get(self, request, format=None):
+        response = []
+        user = self.request.user
+        myuser = User.objects.get(id=user.id)
+        count = myuser.tickets.count()
+        response.append({
+            "email": myuser.email,
+            "message": f"کاربر {myuser.username} شما مجموعا برای ما {count} تیکت ثبت کردید"
+        })
+        return Response(response)
 
 
 class TicketList(ListCreateAPIView):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = (IsAdminUser, )
+
+
+# new
+class ListTickets(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request, format=None):
+        response = []
+        for i in Ticket.objects.all():
+            response.append({
+                "id": i.id,
+                "title": i.title
+            })
+        return Response(response)
 
 
 class TicketDetailList(ListAPIView):

@@ -7,7 +7,7 @@ from .validators import validate_file_size
 class Ticket(models.Model):
     title = models.CharField(max_length=250, verbose_name='عنوان')
     owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, verbose_name='سازنده تیکت')
+        User, on_delete=models.CASCADE, verbose_name='سازنده تیکت', related_name='tickets')
     created_at = models.DateTimeField(
         auto_now_add=True, verbose_name="زمان ساخت تیکت")
 
@@ -21,7 +21,7 @@ class Ticket(models.Model):
 
 class TicketDetail(models.Model):
     user = models.ForeignKey(User, models.CASCADE,
-                             verbose_name='فرستنده پیام')
+                             verbose_name='فرستنده پیام', related_name='tickets_detail')
     ticket = models.ForeignKey(
         Ticket, on_delete=models.CASCADE, related_name='ticket_detail', verbose_name='تیکت')
     massage = models.TextField(verbose_name='متن پیام')
