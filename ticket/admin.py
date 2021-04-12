@@ -1,13 +1,13 @@
 from django.contrib import admin
-from .models import Ticket, TicketDetail
+from .models import Ticket, Message
 # Register your models here.
 
 admin.site.site_header = 'تیکت سایت'
 
 
-class TicketDetailAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'ticket', 'user', 'status_detail')
+class MessageAdmin(admin.ModelAdmin):
+    pass 
 
 
 admin.site.register(Ticket)
-admin.site.register(TicketDetail, TicketDetailAdmin)
+admin.site.register(Message, MessageAdmin)

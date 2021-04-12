@@ -1,14 +1,13 @@
 from django.urls import path, re_path
 from ticket.views import (AllAcounts, ListTickets,
                           MyAcount, MyTicketList,
-                          MyTicketsCreateDetail, MyUploadView, TicketList,
+                          MyTicketsCreateDetail, TicketList,
                           TicketDetailList, TicketDetailCreate
                           )
 
 app_name = 'ticket'
 
 urlpatterns = [
-    path('api/upload', MyUploadView.as_view()),
     path('api/AllAcounts', AllAcounts.as_view(), name='ticket-AllAcounts'),
     path('api/MyAcount', MyAcount.as_view(), name='ticket-MyAcount'),
     path('api/tickets', TicketList.as_view(), name='ticket-list'),

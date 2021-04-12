@@ -12,125 +12,125 @@ from rest_framework.parsers import FileUploadParser
 from rest_framework.authentication import TokenAuthentication
 from .models import Ticket, Message
 
-# # new
-# class AllAcounts(APIView):
-#     permission_classes = (IsAdminUser, )
+# new
+class AllAcounts(APIView):
+    permission_classes = (IsAdminUser, )
 
-#     def get(self, request, format=None):
-#         response = []
-#         user = User.objects.all()
-#         for i in user:
-#             response.append({
-#                 "username": i.username,
-#                 "email": i.email,
-#                 "message": f"کاربر {i.username} مجموعا برای ما {i.tickets.count()} تیکت ثبت کرده است"
-#             })
-#         return Response(response)
-# # new
-
-
-# class MyAcount(APIView):
-#     def get(self, request, format=None):
-#         response = []
-#         user = self.request.user
-#         myuser = User.objects.get(id=user.id)
-#         count = myuser.tickets.count()
-#         response.append({
-#             "email": myuser.email,
-#             "message": f"کاربر {myuser.username} شما مجموعا برای ما {count} تیکت ثبت کردید"
-#         })
-#         return Response(response)
+    def get(self, request, format=None):
+        response = []
+        user = User.objects.all()
+        for i in user:
+            response.append({
+                "username": i.username,
+                "email": i.email,
+                "message": f"کاربر {i.username} مجموعا برای ما {i.tickets.count()} تیکت ثبت کرده است"
+            })
+        return Response(response)
+# new
 
 
-# class TicketList(ListCreateAPIView):
-#     queryset = Ticket.objects.all()
-#     serializer_class = TicketSerializer
-#     permission_classes = (IsAdminUser, )
+class MyAcount(APIView):
+    def get(self, request, format=None):
+        response = []
+        user = self.request.user
+        myuser = User.objects.get(id=user.id)
+        count = myuser.tickets.count()
+        response.append({
+            "email": myuser.email,
+            "message": f"کاربر {myuser.username} شما مجموعا برای ما {count} تیکت ثبت کردید"
+        })
+        return Response(response)
 
 
-# # new
-# class ListTickets(APIView):
-#     permission_classes = (IsAuthenticated, )
-
-#     def get(self, request, format=None):
-
-#         ticket_objs = Ticket.objects.first()
+class TicketList(ListCreateAPIView):
+    queryset = Ticket.objects.all()
+    serializer_class = TicketSerializer
+    permission_classes = (IsAdminUser, )
 
 
-#         ticket_serialized = TicketSerializer(
-#             ticket_objs,
-#         )
+# new
+class ListTickets(APIView):
+    permission_classes = (IsAuthenticated, )
 
-#         TicketSerializer(
-#             data=request.data
-#         )
+    def get(self, request, format=None):
 
-#         TicketSerializer(
-#             ticket_objs,
-#             data=request.data,
-#             partial=True
-#         )
+        ticket_objs = Ticket.objects.first()
 
 
-#         response_json = {
-#             'succeeded': True,
-#             'tickets': ticket_serialized.data
-#         }
+        ticket_serialized = TicketSerializer(
+            ticket_objs,
+        )
+
+        TicketSerializer(
+            data=request.data
+        )
+
+        TicketSerializer(
+            ticket_objs,
+            data=request.data,
+            partial=True
+        )
+
+
+        response_json = {
+            'succeeded': True,
+            'tickets': ticket_serialized.data
+        }
 
 
 
-#         response = []
-#         for i in Ticket.objects.all():
-#             response.append({
-#                 "id": i.id,
-#                 "title": i.title
-#             })
-#         return Response(response)
+        response = []
+        for i in Ticket.objects.all():
+            response.append({
+                "id": i.id,
+                "title": i.title
+            })
+        return Response(response)
 
 
-# class TicketDetailList(ListAPIView):
-#     serializer_class = TicketDetailSerializer
-#     permission_classes = (IsAdminUser, )
+class TicketDetailList(ListAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = (IsAdminUser, )
 
-#     def get_queryset(self):
-#         return TicketDetail.objects.all()
-
-
-# class TicketDetailCreate(CreateAPIView):
-#     serializer_class = TicketDetailSerializer
-#     permission_classes = (IsAdminUser, )
-
-#     def get_queryset(self):
-#         return TicketDetail.objects.all()
-
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
+    def get_queryset(self):
+        return TicketDetail.objects.all()
 
 
-# class MyTicketList(ListCreateAPIView):
-#     serializer_class = TicketSerializer
-#     permission_classes = (IsAuthenticated, )
+class TicketDetailCreate(CreateAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = (IsAdminUser, )
 
-#     def get_queryset(self):
-#         user = self.request.user
-#         return Ticket.objects.filter(owner=user)
+    def get_queryset(self):
+        return TicketDetail.objects.all()
 
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
-# class MyTicketsCreateDetail(CreateAPIView):
-#     serializer_class = TicketDetailSerializer
-#     permission_classes = (IsAuthenticated,)
+class MyTicketList(ListCreateAPIView):
+    serializer_class = TicketSerializer
+    permission_classes = (IsAuthenticated, )
 
-#     def perform_create(self, serializer):
-#         tickett = self.request.data['ticket']
-#         ticket = Ticket.objects.filter(id=tickett).first()
-#         print(ticket.owner)
-#         if ticket.owner == self.request.user:
-#             serializer.save(user=self.request.user)
-#         else:
-#             raise Http404("شما دسترسی به این تیکت ندارید")
+    def get_queryset(self):
+        user = self.request.user
+        return Ticket.objects.filter(owner=user)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class MyTicketsCreateDetail(CreateAPIView):
+    serializer_class = MessageSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def perform_create(self, serializer):
+        tickett = self.request.data['ticket']
+        ticket = Ticket.objects.filter(id=tickett).first()
+        print(ticket.owner)
+        if ticket.owner == self.request.user:
+            serializer.save(user=self.request.user)
+        else:
+            raise Http404("شما دسترسی به این تیکت ندارید")
 
 
 
@@ -200,7 +200,7 @@ class TicketAPIView(APIView):
             },
             partial=True
         )
-        if is not ticket_serialized.is_valid():
+        if not ticket_serialized.is_valid():
             return validation_error(ticket_serialized)
         ticket_serialized.save()
 

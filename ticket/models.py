@@ -60,7 +60,7 @@ class Ticket(TimeStampModel):
         related_name="assigned_to",
     )
 
-     class Meta:
+    class Meta:
          verbose_name = 'تیکت'
          verbose_name_plural = 'تیکت ها'
     

@@ -1,4 +1,4 @@
-from django.models import models
+from django.db import models
 
 class TimeStampModel(models.Model):
 
